@@ -1596,17 +1596,6 @@
 							}
 						},
 						{
-							"name": "optoutTelemetry",
-							"type": "Microsoft.Common.CheckBox",
-                            "visible": "[steps('monitoring').deployAlerts]",
-							"label": "Opt-Out of Telemetry",
-							"toolTip": "Selecting this will omit a flag that helps Microsoft track the number of times this solution was deployed. No other information is sent or monitored! This is helpful for guaging the value the solution provides for future Azure features.",
-							"constraints": {
-								"required": false,
-								"validationMessage": ""
-							}
-						},
-						{
 							"name": "CustomScriptInfo",
 							"type": "Microsoft.Common.Section",
 							"label": "Custom Script Information",
@@ -1657,7 +1646,7 @@
 						{
 							"name": "DistributionGroup",
 							"type": "Microsoft.Common.TextBox",
-							"label": "User Email or Distribution Group",
+							"label": "eMail Distribution Group",
 							"subLabel": "",
 							"defaultValue": "",
 							"toolTip": "The Email Distribution Group that will receive email alerts for AVD.",
@@ -2574,11 +2563,9 @@
                 "ztKvPrefixCustomName ": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsKeyVaultCustomPrefix]",
                 "ztManagedIdentityCustomName": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsManagedIdentityCustomName]",
                 "deployGpuPolicies": "[steps('sessionHosts').sessionHostsSettingsSection.gpuExtensionPolicy]",
-
                 "deployAlerts": "[steps('monitoring').deployAlerts]",
                 "_ArtifactsLocation": "[steps('monitoring').CustomScriptInfo._ArtifactsLocation]",
 				"_ArtifactsLocationSasToken": "[steps('monitoring').CustomScriptInfo._ArtifactsLocationSasToken]",
-				"optoutTelemetry": "[steps('monitoring').optoutTelemetry]",
 				"AutoResolveAlert": "[steps('monitoring').AutoResolveAlert]",
 				"DistributionGroup": "[steps('monitoring').DistributionGroup]"
 				

@@ -11,15 +11,6 @@ targetScope = 'subscription'
 @sys.description('Location where to deploy AVD management plane.')
 param location string
 
-@sys.description('AVD workload subscription ID, multiple subscriptions scenario.')
-param subscriptionId string
-
-@sys.description('create new Azure log analytics workspace.')
-param deployAlaWorkspace bool
-
-@sys.description('Exisintg Azure log analytics workspace resource.')
-param alaWorkspaceId string = ''
-
 @sys.description('AVD Resource Group Name for monitoring resources.')
 param monitoringRgName string
 
@@ -34,7 +25,7 @@ param artifactsLocation string = 'https://raw.githubusercontent.com/Azure/azure-
 param artifactsLocationSasToken string = ''
 
 @description('Telemetry Opt-Out') // Change this to true to opt out of Microsoft Telemetry
-param optoutTelemetry bool = false
+param enableTelemetry bool = false
 
 @sys.description('The name of the resource group to deploy. (Default: AVD1)')
 param alertNamePrefix string = 'AVD'
@@ -47,9 +38,6 @@ param distributionGroup string
 
 @description('First car of deployment type')
 param deploymentEnvironment string
-
-@description('name of host pool')
-param hostPoolName string
 
 @description('the id of the log analytics workspace')
 param avdAlaWorkspaceId string
@@ -79,11 +67,11 @@ var HostPoolResourceIDArray = [hostPoolResourceID]
 
 // Calling AMBA for AVD alerts
 module alerting '../../../../azure-monitor-baseline-alerts/patterns/avd/templates/deploy.bicep' = { 
-  name: 'Alerting-${time}'
+  name: 'AVD-Alerting-${time}'
   params: {
     _ArtifactsLocation: artifactsLocation
     _ArtifactsLocationSasToken: artifactsLocationSasToken
-    optoutTelemetry: optoutTelemetry
+    optoutTelemetry: enableTelemetry ? false : true
     AlertNamePrefix: alertNamePrefix
     DistributionGroup: distributionGroup
     LogAnalyticsWorkspaceResourceId: avdAlaWorkspaceId
@@ -97,19 +85,6 @@ module alerting '../../../../azure-monitor-baseline-alerts/patterns/avd/template
     HostPools: HostPoolResourceIDArray
     HostPoolInfo: hostPoolInfo
     Tags: tags
-
-
-
-  //  change path to link to actual AMBA repo
-
-  // todo remove extra tags section and use default tags from other sectiosn
-
-   // HostPoolInfo: ('Array of objects with the Resource ID for colHostPoolName and colVMresGroup for each Host Pool.'
-   // HostPools: 'Host Pool Resource IDs (array)' (just the host pool resource ID in an array of one)
-   
-   // AVDResourceGroupId: (I think RG of session hosts )
-
-  }
- 
+  } 
 }
 

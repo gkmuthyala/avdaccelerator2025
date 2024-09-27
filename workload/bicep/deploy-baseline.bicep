@@ -204,9 +204,6 @@ param _ArtifactsLocation string = 'https://raw.githubusercontent.com/Azure/azure
 @secure()
 param _ArtifactsLocationSasToken string = ''
 
-@description('Telemetry Opt-Out') // Change this to true to opt out of Microsoft Telemetry
-param optoutTelemetry bool = false
-
 @description('Determine if you would like to set all deployed alerts to auto-resolve.')
 param AutoResolveAlert bool = true
 
@@ -1073,17 +1070,14 @@ module alerting './modules/avdAlerts/deploy.bicep' = if (deployAlerts && avdDepl
   params: {
     artifactsLocation: _ArtifactsLocation
     artifactsLocationSasToken: _ArtifactsLocationSasToken
-    optoutTelemetry: optoutTelemetry
+    enableTelemetry: enableTelemetry
     autoResolveAlert: AutoResolveAlert
     distributionGroup: DistributionGroup
     alertNamePrefix: deploymentPrefix
     deploymentEnvironment: varDeploymentEnvironmentFirstCar
-    hostPoolName: varHostPoolName
     computeObjectsRgName: varComputeObjectsRgName
-    deployAlaWorkspace: deployAlaWorkspace
     location: avdManagementPlaneLocation
     monitoringRgName: varMonitoringRgName
-    subscriptionId: avdWorkloadSubsId
     tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
     avdAlaWorkspaceId: monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId
     hostPoolResourceID: managementPLane.outputs.hostPoolResourceId
