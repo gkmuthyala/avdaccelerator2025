@@ -1552,3 +1552,16 @@ module gpuPolicies './modules/azurePolicies/gpuExtensionsSubscriptions.bicep' = 
     sessionHosts
   ]
 }
+
+
+// Defender policies poool compute
+module defenderPolicies './modules/azurePolicies/defenderResourceGroup.bicep' = if (***********) {
+  scope: resourceGroup('${avdWorkloadSubsId}', '${varComputeObjectsRgName}')
+  name: 'Def-VM-Extensions-${time}'
+  params: {
+    computeObjectsRgName: varComputeObjectsRgName
+    location: avdSessionHostLocation
+    subscriptionId: avdWorkloadSubsId
+  }
+}
+
