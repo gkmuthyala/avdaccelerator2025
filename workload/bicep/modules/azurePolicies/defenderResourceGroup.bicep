@@ -37,7 +37,7 @@ var varCustomPolicyDefinitions = [
 // =========== //
 // call on the keyvault.
 
-// Policy Assignment storage.
+// Policy set Assignment.
 module defenderPolicyAssignmentsStorage '../../../../avm/1.0.0/ptn/authorization/policy-assignment/modules/resource-group.bicep' = [for (customPolicyDefinition, i) in varCustomPolicyDefinitions: {
     scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
     name: 'Policy-Assign-${customPolicyDefinition.deploymentName}-${time}' 
@@ -49,34 +49,6 @@ module defenderPolicyAssignmentsStorage '../../../../avm/1.0.0/ptn/authorization
         location: location
         policyDefinitionId: gpuPolicyDefinitions[i].outputs.resourceId
     }
-}]
-
-// Policy Assignment service objects.
-module defenderPolicyAssignmentsServiceObjects '../../../../avm/1.0.0/ptn/authorization/policy-assignment/modules/resource-group.bicep' = [for (customPolicyDefinition, i) in varCustomPolicyDefinitions: {
-  scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-  name: 'Policy-Assign-${customPolicyDefinition.deploymentName}-${time}' 
-  params: {
-      name: customPolicyDefinition.libDefinition.name
-      displayName: customPolicyDefinition.libDefinition.properties.displayName
-      description: customPolicyDefinition.libDefinition.properties.description
-      identity: 'SystemAssigned'
-      location: location
-      policyDefinitionId: gpuPolicyDefinitions[i].outputs.resourceId
-  }
-}]
-
-// Policy Assignment pool compute.
-module defenderPolicyAssignmentsCompute '../../../../avm/1.0.0/ptn/authorization/policy-assignment/modules/resource-group.bicep' = [for (customPolicyDefinition, i) in varCustomPolicyDefinitions: {
-  scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-  name: 'Policy-Assign-${customPolicyDefinition.deploymentName}-${time}' 
-  params: {
-      name: customPolicyDefinition.libDefinition.name
-      displayName: customPolicyDefinition.libDefinition.properties.displayName
-      description: customPolicyDefinition.libDefinition.properties.description
-      identity: 'SystemAssigned'
-      location: location
-      policyDefinitionId: gpuPolicyDefinitions[i].outputs.resourceId
-  }
 }]
 
 // // Policy Remediation Task for GPU extensions.
