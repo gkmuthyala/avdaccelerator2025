@@ -20,4 +20,4 @@ jobs:
       run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
     - name: Deploy Bicep file
-      run: az deployment group create --resource-group <resource-group-name> --template-file workload/bicep/brownfield/newSessionHosts/deploy.bicep --parameters workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
+      run: az deployment group create --resource-group <resource-group-name> --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
