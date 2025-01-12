@@ -4,47 +4,40 @@ on:
   push:
     branches:
       - main
-  # Add workflow_dispatch to enable manual triggers
   workflow_dispatch:
 
 permissions:
-  # Define required permissions
   contents: read
-  id-token: write # Required for OIDC authentication
+  id-token: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    environment: Production # Add environment for better security control
-    
+    environment: Production
+
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4 # Update to latest version
-      
-    - name: Set up Azure CLI
-      uses: azure/CLI@v1
-      with:
-        azcliversion: latest # Specify Azure CLI version
-        
-    # Recommended: Use OIDC authentication instead of service principal
+      uses: actions/checkout@v4
+
     - name: 'Azure login'
       uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        enable-AzPSSession: true
-        
-    - name: Deploy Bicep file
-      run: |
-        # Add error handling and validation
-        az deployment group what-if \
-          --resource-group Azure-GK-RG3 \
-          --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep \
-          --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
-          
-        az deployment group create \
-          --resource-group Azure-GK-RG3 \
-          --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep \
-          --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
+
+    - name: Deploy Bicep template
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          echo "Validating deployment..."
+          az deployment group what-if \
+            --resource-group Azure-GK-RG3 \
+            --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep \
+            --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
+
+          echo "Deploying Bicep template..."
+          az deployment group create \
+            --resource-group Azure-GK-RG3 \
+            --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep \
+            --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
