@@ -1,23 +1,50 @@
-name: Deploy Bicep
+name: Deploy Bicep-NewAVD
 
 on:
   push:
     branches:
       - main
+  # Add workflow_dispatch to enable manual triggers
+  workflow_dispatch:
+
+permissions:
+  # Define required permissions
+  contents: read
+  id-token: write # Required for OIDC authentication
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
+    environment: Production # Add environment for better security control
+    
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v4 # Update to latest version
+      
     - name: Set up Azure CLI
       uses: azure/CLI@v1
-
-    - name: Authenticate with Azure
-      run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-
+      with:
+        azcliversion: latest # Specify Azure CLI version
+        
+    # Recommended: Use OIDC authentication instead of service principal
+    - name: 'Azure login'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        enable-AzPSSession: true
+        
     - name: Deploy Bicep file
-      run: az deployment group create --resource-group <resource-group-name> --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
+      run: |
+        # Add error handling and validation
+        az deployment group what-if \
+          --resource-group Azure-GK-RG3 \
+          --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep \
+          --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
+          
+        az deployment group create \
+          --resource-group Azure-GK-RG3 \
+          --template-file ./workload/bicep/brownfield/newSessionHosts/deploy.bicep \
+          --parameters ./workload/bicep/brownfield/newSessionHosts/parameters/new-session-hosts.parameters.all.bicepparam
